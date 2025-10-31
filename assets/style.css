@@ -17,3 +17,62 @@ form textarea { resize: vertical; }
 form button { width: 100%; padding: 10px; border: none; background: #007bff; color: #fff; border-radius: 4px; cursor: pointer; }
 form button:hover { background: #0056b3; }
 p { text-align: center; color: green; font-weight: bold; }
+
+/* Holidays widget */
+.holidays-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.holidays-widget button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.holidays-widget button:hover {
+    background: #0056b3;
+}
+
+.holidays-panel {
+    display: none;
+    position: absolute;
+    bottom: 50px;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 15px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.holidays-panel h3 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.holidays-panel select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.holidays-list div {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.holidays-list div:last-child {
+    border-bottom: none;
+}

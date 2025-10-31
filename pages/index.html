@@ -27,6 +27,25 @@
             <div id="prontoTasks"></div>
         </div>
     </div>
+    <div id="holidays-widget" class="holidays-widget">
+        <button id="holidays-toggle">📅 Feriados</button>
+        <div id="holidays-panel" class="holidays-panel">
+            <h3>Feriados de <?php echo date('Y'); ?></h3>
+            <select id="country-select">
+                <option value="BR">Brasil</option>
+                <option value="US">Estados Unidos</option>
+                <option value="PT">Portugal</option>
+                <option value="ES">Espanha</option>
+                <option value="FR">França</option>
+                <option value="DE">Alemanha</option>
+                <option value="IT">Itália</option>
+                <option value="JP">Japão</option>
+                <option value="CN">China</option>
+                <option value="IN">Índia</option>
+            </select>
+            <div id="holidays-list"></div>
+        </div>
+    </div>
     <script>
         async function fetchTasks() {
             const res = await fetch('../api/read.php');
@@ -89,6 +108,44 @@
 
         let tasks = [];
         fetchTasks();
+
+        // Holidays widget
+        let holidaysVisible = false;
+        document.getElementById('holidays-toggle').addEventListener('click', toggleHolidays);
+
+        async function toggleHolidays() {
+            const panel = document.getElementById('holidays-panel');
+            if (!holidaysVisible) {
+                await fetchHolidays();
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
+            holidaysVisible = !holidaysVisible;
+        }
+
+        async function fetchHolidays() {
+            try {
+                const country = document.getElementById('country-select').value;
+                const res = await fetch(`../api/holidays.php?country=${country}`);
+                const holidays = await res.json();
+                if (holidays.error) {
+                    document.getElementById('holidays-list').innerHTML = '<p>Erro ao carregar feriados.</p>';
+                    return;
+                }
+                const list = holidays.map(h => `<div>${h.date} - ${h.localName || h.name}</div>`).join('');
+                document.getElementById('holidays-list').innerHTML = list;
+            } catch (error) {
+                document.getElementById('holidays-list').innerHTML = '<p>Erro ao carregar feriados.</p>';
+            }
+        }
+
+        // Update holidays when country changes
+        document.getElementById('country-select').addEventListener('change', () => {
+            if (holidaysVisible) {
+                fetchHolidays();
+            }
+        });
     </script>
 </body>
 </html>
