@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban - Gerenciamento de Tarefas</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+    <nav>
+        <a href="user_register.php">Cadastrar Usuário</a>
+        <a href="task_register.php">Cadastrar Tarefa</a>
+        <a href="index.html">Gerenciar Tarefas</a>
+    </nav>
+    <h1>Kanban - Gerenciamento de Tarefas</h1>
+    <div class="kanban-board">
+        <div class="kanban-column" id="a fazer">
+            <h2>A Fazer</h2>
+            <div id="a fazerTasks"></div>
+        </div>
+        <div class="kanban-column" id="fazendo">
+            <h2>Fazendo</h2>
+            <div id="fazendoTasks"></div>
+        </div>
+        <div class="kanban-column" id="pronto">
+            <h2>Pronto</h2>
+            <div id="prontoTasks"></div>
+        </div>
+    </div>
+    <script>
+        async function fetchTasks() {
+            const res = await fetch('../api/read.php');
+            tasks = await res.json();
+            renderTasks();
+        }
+
+        function renderTasks() {
+            ['a fazer', 'fazendo', 'pronto'].forEach(status => {
+                document.getElementById(status + 'Tasks').innerHTML = '';
+            });
+            tasks.forEach((task) => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task';
+                taskDiv.innerHTML = `
+                    <div><strong>${task.descricao}</strong></div>
+                    <div>Setor: ${task.setor}</div>
+                    <div>Prioridade: ${task.prioridade}</div>
+                    <div>Usuário: ${task.usuario_nome}</div>
+                    <div class="actions">
+                        ${task.status !== 'a fazer' ? `<button onclick="moveTask(${task.id}, 'back')">←</button>` : ''}
+                        ${task.status !== 'pronto' ? `<button onclick="moveTask(${task.id}, 'forward')">→</button>` : ''}
+                        <button onclick="editTask(${task.id})">✎</button>
+                        <button onclick="deleteTask(${task.id})">🗑️</button>
+                    </div>
+                `;
+                document.getElementById(task.status + 'Tasks').appendChild(taskDiv);
+            });
+        }
+
+        async function moveTask(id, direction) {
+            const statuses = ['a fazer', 'fazendo', 'pronto'];
+            const task = tasks.find(t => t.id == id);
+            let current = statuses.indexOf(task.status);
+            let newStatus = task.status;
+            if (direction === 'forward' && current < 2) newStatus = statuses[current + 1];
+            if (direction === 'back' && current > 0) newStatus = statuses[current - 1];
+            await fetch('../api/update.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `id=${id}&usuario_id=${task.usuario_id}&descricao=${encodeURIComponent(task.descricao)}&setor=${encodeURIComponent(task.setor)}&prioridade=${encodeURIComponent(task.prioridade)}&status=${newStatus}`
+            });
+            fetchTasks();
+        }
+
+        async function deleteTask(id) {
+            if (confirm('Excluir esta tarefa?')) {
+                await fetch('../api/delete.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `id=${id}`
+                });
+                fetchTasks();
+            }
+        }
+
+        function editTask(id) {
+            window.location.href = `task_register.php?id=${id}`;
+        }
+
+        let tasks = [];
+        fetchTasks();
+    </script>
+</body>
+</html>
