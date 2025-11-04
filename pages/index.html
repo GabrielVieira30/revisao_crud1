@@ -46,6 +46,14 @@
             <div id="holidays-list"></div>
         </div>
     </div>
+    <div id="pokemon-widget" class="pokemon-widget">
+        <button id="pokemon-toggle">🐾 Pokémon</button>
+        <div id="pokemon-panel" class="pokemon-panel">
+            <h3>Pokémon Aleatório</h3>
+            <button id="fetch-pokemon">Buscar Pokémon</button>
+            <div id="pokemon-info"></div>
+        </div>
+    </div>
     <script>
         async function fetchTasks() {
             const res = await fetch('../api/read.php');
@@ -146,6 +154,39 @@
                 fetchHolidays();
             }
         });
+
+        // Pokemon widget
+        let pokemonVisible = false;
+        document.getElementById('pokemon-toggle').addEventListener('click', togglePokemon);
+        document.getElementById('fetch-pokemon').addEventListener('click', fetchPokemon);
+
+        async function togglePokemon() {
+            const panel = document.getElementById('pokemon-panel');
+            if (!pokemonVisible) {
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
+            pokemonVisible = !pokemonVisible;
+        }
+
+        async function fetchPokemon() {
+            try {
+                const randomId = Math.floor(Math.random() * 1010) + 1; // Pokemon IDs from 1 to 1010
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`);
+                const pokemon = await res.json();
+                const types = pokemon.types.map(t => t.type.name).join(', ');
+                document.getElementById('pokemon-info').innerHTML = `
+                    <h4>${pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</h4>
+                    <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" style="width: 100px; height: 100px;">
+                    <p>Tipos: ${types}</p>
+                    <p>Altura: ${pokemon.height / 10} m</p>
+                    <p>Peso: ${pokemon.weight / 10} kg</p>
+                `;
+            } catch (error) {
+                document.getElementById('pokemon-info').innerHTML = '<p>Erro ao carregar Pokémon.</p>';
+            }
+        }
     </script>
 </body>
 </html>

@@ -76,3 +76,69 @@ p { text-align: center; color: green; font-weight: bold; }
 .holidays-list div:last-child {
     border-bottom: none;
 }
+
+/* Pokemon widget */
+.pokemon-widget {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.pokemon-widget button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.pokemon-widget button:hover {
+    background: #218838;
+}
+
+.pokemon-panel {
+    display: none;
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 15px;
+    width: 250px;
+    text-align: center;
+}
+
+.pokemon-panel h3 {
+    margin-top: 0;
+}
+
+.pokemon-panel #fetch-pokemon {
+    background: #ffc107;
+    color: black;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.pokemon-panel #fetch-pokemon:hover {
+    background: #e0a800;
+}
+
+.pokemon-info h4 {
+    margin: 10px 0;
+}
+
+.pokemon-info img {
+    margin: 10px 0;
+}
+
+.pokemon-info p {
+    margin: 5px 0;
+}
